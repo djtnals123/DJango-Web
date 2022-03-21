@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+{% load filters %}
+{% load static %}
+<link rel="shortcut icon" href="{% static 'img/logo.png' %}">
+<title>ADRM</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/join.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    let url
+	if(location.pathname.indexOf('modify') == -1)
+		url = "{% url 'account:register' %}";
+	else {
+		url = "{% url 'account:modify' %}";
+		$("#username").attr("disabled",true);
+
+		if('${user.auth}'.indexOf('USER') != -1)
+			$("input:checkbox[id='role1']").prop("checked", true);
+		if('${user.auth}'.indexOf('MEM') != -1)
+			$("input:checkbox[id='role2']").prop("checked", true);
+	}
+	$("#submit").on('click', function() {
+		submit(url);
+	})
+});
+
+function submit(url) {
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: $('#joinFrm').serialize(),
+        headers:{
+          'X-CSRFTOKEN':'{{ csrf_token }}'
+        },
+        success: function(data){
+            location.href=data.redirect;
+        },
+        error: function(err, status, a){
+            if(err.status == 401)
+                alert(err.responseJSON.msg);
+            else
+                alert('error')
+        }
+  	});
+}
+</script>
+<style type="text/css">
+	#joinFrm label.error {
+		color: #ff0000;
+		display: none;
+	}
+</style>
+<title>Sumin Lecture</title>
+</head>
+<body>
+	<!-- wrap :s -->
+	<div id="wrap">
+		<!-- header :s -->
+		{% include "include/header/header_main.html" %}
+		<!-- header :e -->
+
+		<!-- container :s -->
+		<div id="container">
+			<div id="content">
+                <h4>{% if account %}
+                        회원정보수정
+                    {% else %}
+                        회원가입
+                    {% endif %}</h4>
+				<form id="joinFrm" name="joinFrm" target="_top">
+					<table class="tbl_basic center">
+						<tbody>
+							<tr>
+								<td class="trw1" >ID</td>
+								<td class="trw" >
+									<div class="join_input_row">
+										<span class="input_box">
+											<label for="id" id="label_id_area" class="lbl">ID</label>
+											<input type="text" id="username" name="username" class="int" maxlength="30"
+                                                   value="{{ account.username|default_if_none:'' }}">
+										</span>
+									</div>
+									<label for="id" class="error"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >비밀번호</td>
+								<td class="trw" >
+									<div class="join_input_row">
+										<span class="input_box">
+											<label for="pw" id="label_pw_area" class="lbl">Password</label>
+											<input type="password" name="password1" class="int" maxlength="30" >
+										</span>
+									</div>
+									<label for="pw" class="error"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >비밀번호 확인</td>
+								<td class="trw" >
+									<div class="join_input_row">
+										<span class="input_box">
+											<label for="pw" id="label_pw_area" class="lbl">Password</label>
+											<input type="password" name="password2" class="int" maxlength="30" >
+										</span>
+									</div>
+									<label for="confirm_pw" class="error"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >E-MAIL</td>
+								<td class="trw" >
+									<div class="join_input_row">
+										<span class="input_box">
+											<label for="id" id="label_id_area" class="lbl">ID</label>
+											<input type="text" id="email" name="email" class="int" maxlength="30"
+                                                   value="{{ account.email|default_if_none:'' }}">
+										</span>
+									</div>
+									<label for="email" class="error"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >이름</td>
+								<td class="trw" >
+									<div class="join_input_row">
+										<span class="input_box">
+											<label for="id" id="label_id_area" class="lbl">ID</label>
+											<input type="text" id="name" name="name" class="int" maxlength="30"
+                                                   value="{{ account.name|default_if_none:'' }}">
+										</span>
+									</div>
+									<label for="name" class="error"></label>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >병원선택</td>
+								<td class="trw" >
+									<select id="hospital" name="hospital" class="select_box">
+										<option value="S" {% if account.hospital == 'S' %}selected{% endif %}>
+                                            서울대학교 병원
+                                        </option>
+										<option value="K" {% if account.hospital == 'K' %}selected{% endif %}>
+                                            고려대학교 병원
+                                        </option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="trw1" >회원형태</td>
+								<td class="trw" >
+									<div class="none_input_row" id="select_roll">
+										<span class="chkbox_area">
+                                            <input id="role1" type="checkbox" name="roles" value="1" tabindex="9"
+                                                   {% if account and account|has_group:'patient' %}checked{% endif %}
+                                                   class="chkbox">환자
+                                        </span>
+										<span class="chkbox_area">
+                                            <input id="role2" type="checkbox" name="roles" value="2" tabindex="9"
+                                                   {% if account and account|has_group:'doctor' %}checked{% endif %}
+                                                   class="chkbox">의사</span>
+									</div>
+									<label for="roles" class="error"></label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<fieldset class="login_form">
+                        {% if account %}
+						<input id="submit" type="button" title="회원정보수정" alt="회원정보수정" value="회원정보수정" class="btn_login">
+                        {% else %}
+						<input id="submit" type="button" title="회원가입" alt="회원가입" value="회원가입" class="btn_login">
+                        {% endif %}
+						<input id="cancelBtn" type="button" title="취소" alt="취소" value="취소" class="btn_cancel">
+					</fieldset>
+                    {% csrf_token %}
+				</form>
+			</div>
+			
+		</div>
+		<!-- container :e -->
+
+		<!-- footer :s -->
+		{% include "include/footer/footer_main.html" %}
+		<!-- footer :e	 -->
+
+	
+
+	</div>
+<!-- wrap :e -->
+</body>
+</html>

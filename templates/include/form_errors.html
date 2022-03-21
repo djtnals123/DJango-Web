@@ -1,0 +1,6 @@
+{% load filters %}
+    {% if form.errors.items %}
+        <div style="color: red">
+            <strong>{{form.errors.items|first_error}}</strong>
+        </div>
+    {% endif %}

@@ -1,0 +1,6 @@
+{% load filters %}
+<script type="text/javascript">
+    {% if form.errors.items %}
+        alert('{{form.errors.items|first_error}}')
+    {% endif %}
+</script>

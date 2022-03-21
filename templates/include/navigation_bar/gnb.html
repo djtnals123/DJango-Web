@@ -1,0 +1,21 @@
+{% load filters %}
+				<div id="gnbWrap">
+					<div id="gnb">
+						<ul class="menu">
+                            {% if user.is_staff %}
+							<li><a href="#">사용자 관리</a>
+								<ul class="sub">
+									<li><a href="{% url 'admin2:user_list' %}">계정 관리</a></li>
+								</ul>
+							</li>
+                            {% endif %}
+
+							<li><a href="#">게시판 관리</a>
+								<ul class="sub">
+									<li><a href="{% url 'board:list' %}">공지사항</a></li>
+									<li><a href="{% url 'board:list' %}">자유게시판</a></li>
+								</ul>
+							</li>
+						</ul>
+					 </div>
+			 	</div>

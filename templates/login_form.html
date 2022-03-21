@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+{% load static %}
+<link rel="shortcut icon" href="{% static 'img/logo.png' %}">
+<title>Sumin Lecture</title>
+<link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/signIn.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+
+{#<script src="{% static 'js/jquery.min.js' %}"></script>#}
+{#<script type="text/javascript">#}
+{#    $(document).ready(function () {#}
+{#    })#}
+{#</script>#}
+</head>
+<body>
+<!-- wrap :s -->
+	<div id="wrap">
+		<!-- header :s -->
+		<div id="header">
+			<h1><a href="#" class="sp h_logo" ></a></h1>
+		</div>
+		<!-- header :e -->
+
+		<!-- container :s -->
+		<div id="container">
+			<div id="content">
+				<form action="{% url 'index:login' %}" method="post">
+					<fieldset class="findif_form">
+						<legend class="blind">Sign In</legend>
+
+						<label for="id" class="error"></label>
+						<div class="input_row" id="id_area">
+							<span class="input_box">
+								<label for="id" id="label_id_area" class="lbl">ID</label>
+								<input type="text" name="username"  placeholder="ID" class="int" maxlength="30" value="">
+							</span>
+						</div>
+						<label for="pw" class="error"></label>
+						<div class="input_row" id="pw_area">
+							<span class="input_box">
+								<label for="pw" id="label_pw_area" class="lbl">Password</label>
+								<input type="password" name="password"  placeholder="Password" class="int" maxlength="30" >
+							</span>
+						</div>
+						
+						<div class="login_check">
+							<span class="login_check_box">
+								<input type="checkbox" id="login_chk" name="nvlong" class="" tabindex="9" value="off" onchange="savedLong(this);nclks_chk('login_chk', 'log.keepon', 'log.keepoff',this,event)" onclick="msieblur(this);">
+								<label for="login_chk" id="label_login_chk" class="sp">아이디 저장</label>
+							</span>
+						</div>
+                        {% if next %}
+                        <div style="color: red">
+                            <strong>권한이 없습니다.</strong>
+                        </div>
+                        {% endif %}
+                        {% include 'include/form_errors.html' %}
+						<input type="submit" id="btn_login" title="로그인" alt="로그인" value="로그인" class="btn_login" onclick=" ">
+						
+						<div class="find_info">
+							<ul>
+								<li><a href="{% url 'account:agree' %}">회원가입</a></li>
+							</ul>
+						</div>
+					</fieldset>
+                    {% if request.GET.next %}
+                        <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endif %}
+                    {% csrf_token %}
+                </form>
+			</div>
+		</div>
+		<!-- container :e -->
+
+		<!-- footer :s -->
+		{% include "include/footer/footer_main.html" %}
+		<!-- footer :e	 -->
+
+	
+
+	</div>
+<!-- wrap :e -->
+
+</body>
+</html>

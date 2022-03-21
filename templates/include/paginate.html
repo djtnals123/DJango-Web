@@ -1,0 +1,34 @@
+{% load custom_tags %}
+<ul class="paginate">
+    {% if page_list.has_previous %}
+    <li class="dir prev">
+        <a href="{% url url %}{% query_string page=page_list.previous_page_number per_page=page_list.paginator.per_page option=option keyword=keyword %}"
+           title="이전페이지로 이동">«</a>
+    </li>
+    {% endif %}
+    {% get_proper_elided_page_range page_list as page_range %}
+    {% for page_number in page_range %}
+        {% if page_number == '…' %}
+        <li>
+            <span>…</span>
+        </li>
+        {% else %}
+            {% if page_number == page_list.number %}
+            <li class="active">
+                <a href="#" title="{{ page_number }}페이지">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{% url url %}{% query_string page=page_number per_page=page_list.paginator.per_page option=option keyword=keyword %}"
+                   title="{{ page_number }}페이지">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if page_list.has_next %}
+    <li class="dir next">
+        <a href="{% url url %}{% query_string page=page_list.next_page_number per_page=page_list.paginator.per_page option=option keyword=keyword %}"
+           title="다음페이지로 이동">»</a>
+    </li>
+    {% endif %}
+</ul>
